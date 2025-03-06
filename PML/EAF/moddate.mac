@@ -1,0 +1,7 @@
+
+var !l lastmod
+!d = object datetime(!l)
+
+!df = object dateformat('D.M.Y')
+
+q var !df.string(!d)

@@ -1,0 +1,50 @@
+!fileNoExt = 'replaceME'
+!root = 'D:\IFC\EAF-IFC-import\'
+
+!inputDir = !root & 'input\'
+!outputDir = !root & 'output\'
+
+!inputFile = !inputDir & !fileNoExt & '.ifc'
+!inputLog = !inputDir & !fileNoExt & '.log'
+
+!outputFiletwo = !outputDir & !fileNoExt & '_2x3.ifc'
+!outputLogtwo = !outputDir & !fileNoExt & '_2x3.log'
+!outputFilefour = !outputDir & !fileNoExt & '_4x0.ifc'
+!outputLogfour = !outputDir & !fileNoExt & '_4x0.log'
+
+!dq = '"'
+
+!equiName = '/' & !fileNoExt.replace(' ', '')
+
+new EQUI $!equiName
+handle any
+endhandle
+
+!refEqui = !!ce
+
+$P $!inputFile
+$P $!inputLog
+
+IMP MULTICAD $!dq$!inputFile$!dq AS EQUI LOG FULL $!dq$!inputLog$!dq
+
+ZONE
+!ifcExp = object IFCExporterObj()
+!ifcExp.ADDDBSOURCE(!refEqui)
+!ifcExp.SETLOGDETAIL(4)
+!ifcExp.SETVERSION('IFC2x3')
+!ifcExp.SETLOGFILE(!outputLogtwo)
+!ifcExp.SETDESTINATION(!outputFiletwo)
+!ifcExp.export()
+
+$(
+!ifcExp.SETVERSION('IFC4')
+!ifcExp.SETLOGFILE(!outputLogfour)
+!ifcExp.SETDESTINATION(!outputFilefour)
+!ifcExp.export()
+$)
+
+!ifcExp.delete()
+
+-- !!myResult = !ifcE
+savework
+unclaim all

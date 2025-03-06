@@ -1,0 +1,35 @@
+!mem = !!ce.members
+!nameString = array()
+!nameLength = array()
+!dbString = array()
+!maxNameLen = 0
+
+do !eaMem values !mem
+	!name = !eaMem.name
+	!len = !name.length()
+	if !len gt !maxNameLen then
+		!maxNameLen = !len
+	endif
+	
+	!db = !eaMem.dbfile
+	
+	!nameString.append(!name)
+	!nameLength.append(!len)
+	!dbString.append(!db)	
+enddo
+
+-- $P $!maxNameLen
+
+do !eaItem index !nameString
+	!space = '   '
+	
+	do !x from !nameLength[!eaItem] to !maxNameLen
+		!space = '_' & !space
+	enddo
+	
+	!space = '   ' & !space
+	
+	!string = !space & !nameString[$!eaItem] & '   ' & !dbString[$!eaItem]
+	$P $!string
+	
+enddo

@@ -1,0 +1,75 @@
+$P Evaluate All Params for SECT/CATE
+!tmpCE = !!ce
+
+--!mode = 'BSS'
+!mode = 'LJSE'
+!mode = 'FLAN'
+
+--!paraAmt = 11
+!paraAmt = 30
+
+if !tmpCE.type eq 'SECT' or !tmpCE.type eq 'CATE' then
+  $P Start
+else
+  $P Wrong origin
+  RETURN
+endif
+
+var !allScom coll all scom for ce
+
+!names = array()
+!para = array()
+
+do !eaScom index !allScom
+  --!tmpParaArr = array()
+  !names.append(!allScom[!eaScom].dbref().name)
+  do !eaPara from 1 to !paraAmt
+    !para[!eaScom][!eaPara] = !allScom[!eaScom].dbref().para[!eaPara]
+    --!tmpParaArr.append(!tmpPara)
+  enddo
+  --!para.append(!tmpParaArr)
+enddo
+
+do !eaScom index !para
+  if !mode eq 'BSS' then
+    --This is for BSS
+    !out = !names[!eaScom] + '; '
+    --Parameter number for each cell: DN; PN; D; d; b; A; B; Achsabstand; Gewicht;
+    !out = !out + !para[!eaScom][1].string()  + '; '
+    !out = !out + !para[!eaScom][5].string()  + '; '
+    !out = !out + !para[!eaScom][2].string()  + '; '
+    !out = !out + !para[!eaScom][7].string()  + '; '
+    !out = !out + !para[!eaScom][3].string()  + '; '
+    !out = !out + !para[!eaScom][8].string()  + '; '
+    !out = !out + !para[!eaScom][10].string() + '; '
+    !out = !out + 'Scheibenabstand; '
+    !out = !out + !para[!eaScom][4].string() + '; '
+    !out = !out + !para[!eaScom][11].string() + '; '
+  elseif !mode eq 'LJSE' then
+    !out = !names[!eaScom] + '; '
+    --Parameter number for each cell: DN; DA; s1; s3; d4; Diff DA-Ansatz; h4; Gewicht; Diff Bolting
+    !out = !out + !para[!eaScom][1].string()  + '; '
+    !out = !out + !para[!eaScom][2].string()  + '; '
+    !tempP1 = ( !para[!eaScom][2] - !para[!eaScom][1] ) / 2
+    !out = !out + !tempP1.string() + '; '
+    !out = !out + !para[!eaScom][3].string()  + '; '
+    !out = !out + !para[!eaScom][4].string()  + '; '
+    !tempP2 = ( !para[!eaScom][2] - !para[!eaScom][5] )
+    !out = !out + !tempP2.string() + '; '
+    !out = !out + !para[!eaScom][6].string()  + '; '
+    !out = !out + !para[!eaScom][26].string()  + '; '
+    !tempP3 = ( !para[!eaScom][3] - !para[!eaScom][30] )
+    !out = !out + !tempP3.string() + '; '
+  elseif !mode eq 'FLAN' then
+    !out = !names[!eaScom] + '; '
+    --Parameter number for each cell: DN; DA; Bund; S; Bolting
+    !out = !out + !para[!eaScom][1].string()  + '; '
+    !out = !out + !para[!eaScom][2].string()  + '; '
+    !out = !out + !para[!eaScom][3].string()  + '; '
+    !out = !out + !para[!eaScom][8].string()  + '; '
+    !out = !out + !para[!eaScom][30].string()  + '; '
+    
+    
+  endif
+  $P $!out
+enddo

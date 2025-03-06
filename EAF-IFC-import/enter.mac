@@ -1,0 +1,17 @@
+q mem
+
+!zone = /IMPORT_001/ZONE_001
+
+$P Take out the trash
+var !trash coll all equi for $!zone
+
+do !garbage values !trash
+	$!garbage
+	delete equi
+enddo
+
+$!zone
+
+$M "D:\IFC\EAF-IFC-import\todo.mac"
+
+quit finish

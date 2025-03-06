@@ -1,0 +1,14 @@
+
+*.ifc
+
+EAF-IFC-import/output/
+
+EAF-IFC-import/input/
+
+EAF-IFC-import/old/
+
+EAF-IFC-import/todo.mac
+
+EAF-IFC-import/importToProj.mac
+
+EAF-IFC-import/importStraight.mac

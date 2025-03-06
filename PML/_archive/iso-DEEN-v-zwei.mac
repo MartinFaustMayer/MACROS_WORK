@@ -1,0 +1,71 @@
+$P Swap DE for EN
+!tmpCE = !!ce
+
+claim ce
+handle any
+  $P Can't claim, exiting
+  RETURN
+endhandle
+
+if !tmpCE.type neq 'REGI' and !tmpCE.type neq 'DRWG' then 
+  $P Wrong origin, navigate to DRWG or REGI
+  RETURN
+endif
+
+!changed = array()
+!changeDesc = array()
+
+--!toDeleteCommand = array()
+
+var !insuHeaders coll all symb with tmrf eq /EC_ISOBOOK/SETTINGS/LIST/Insulation/Header/185-DE for ce
+var !branLists coll all symb with tmrf eq /EC_ISOBOOK/SETTINGS/LIST/Branchlist/Head/185-DE for ce
+var !cuttingLists coll all symb with tmrf eq /EC_ISOBOOK/SETTINGS/LIST/Cuttinglist/185/Head for ce
+var !weightTexts coll all texp with matchwild( btex, '*Gewicht Vorfertiungsmaterial' ) for ce
+var !insuHeaderDel coll all symb with tmrf eq /EC_ISOBOOK/SETTINGS/LIST/Insulation/Header/02-DE for ce
+
+do !eaInsuHeaders values !insuHeaders
+  !dbEaInsuHeaders = !eaInsuHeaders.dbref()
+  !dbEaInsuHeaders.tmrf = /EC_ISOBOOK/SETTINGS/LIST/Insulation/Header/185-EN
+  !changed.append(!eaInsuHeaders)
+  !changeDesc.append('insu header')
+enddo
+
+do !eaBranLists values !branLists
+  !dbEaBranLists = !eaBranLists.dbref()
+  !dbEaBranLists.tmrf = /EC_ISOBOOK/SETTINGS/LIST/Branchlist/Head/185-EN
+  !changed.append(!eaBranLists)
+  !changeDesc.append('insu list')
+enddo
+
+do !eaCuttingLists values !cuttingLists
+  !dbeaCuttingLists = !eaCuttingLists.dbref()
+  !dbeaCuttingLists.tmrf = /EC_ISOBOOK/SETTINGS/LIST/Cuttinglist/185/Head-EN
+  !changed.append(!eaCuttingLists)
+  !changeDesc.append('cutting list')
+enddo
+
+do !eaWeightTexts values !weightTexts
+  !dbeaWeightTexts = !eaWeightTexts.dbref()
+  !dbeaWeightTexts.btex = 'Weight prefabrication material'
+  !changed.append(!eaWeightTexts)
+  !changeDesc.append('weight text')
+enddo
+
+do !eaInsuHeaderDel values !insuHeaderDel
+  --!tmpString = !eaInsuHeaderDel & ' delete symb'
+  --$P $!tmpString
+  $!eaInsuHeaderDel
+  handle any
+    !mess = !!error.text
+    $P !mess
+  elsehandle none
+    delete symb
+  endhandle
+enddo
+
+!!mmaMacChanged = !changed
+!!mmaMacChangeDesc = !changeDesc
+
+$P check changes:
+$P q var !!mmaMacChanged
+$P q var !!mmaMacChangeDesc

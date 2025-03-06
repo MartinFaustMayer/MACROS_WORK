@@ -1,0 +1,39 @@
+!tmpce = !!ce
+
+!mdbs = array()
+!mdbs.append('/E_EC_Project_DBs')
+
+!total = array()
+
+do !eamdb values !mdbs
+	
+	mdb $!eamdb
+	!mdb = !!ce
+	
+	var !mdbdbs coll all db for $!mdb
+	var !mdbdbls coll all dbl for $!mdb
+
+	var !dbnums eval name for all from !mdbdbs
+
+	do !eadbl values !mdbdbls
+		!dbnums.append(!eadbl.dbref().dbf.name)
+	enddo
+
+	!total.appendarray(!dbnums)
+	
+enddo
+
+!total.unique()
+
+!promote = array()
+
+do !eadb val !total
+	!dbcdb = !eadb.dbref()
+	if !dbcdb.projid.unset().not() then
+		--!promote.append(!eadb.after('/*'))
+		!string = !eadb.after('/*')
+		promote db $!string
+	endif
+enddo
+
+$!tmpce

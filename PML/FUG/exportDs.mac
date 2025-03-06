@@ -1,0 +1,43 @@
+--Export single datasheet
+import |AVEVA.Datasheets.Addin|
+handle (1000,0)
+endhandle
+using namespace |AVEVA.Datasheets.Addin|
+
+!dstrefFL = /Flanschenprotokoll
+!dstrefEN = /Rohrleitungspruefblatt_Engi
+!dstrefFE = /Rohrleitungspruefblatt_Fertiger
+
+!dsigro = /ESN/DSIWLD/COVERSHEET/GRP
+
+$!dsigro
+handle any
+	$P not found
+endhandle
+
+var !dsinst coll all dsinst for $!dsigro
+
+do !eaDsinst values !dsinst
+	
+	!dbDsinst = !eaDsinst.dbref()
+	
+	!dsinstName = !dbDsinst.name.after('/TAGS/')
+	
+	!dsinstFilename = 'C:\Users\Public\DOCUME~1\AVEVA\USERDATA\Datasheet\' & !dsinstName & '.xlsx'
+	
+	if !dbDsinst.dstref eq !dstrefFL then
+		--$P Flan
+	elseif !dbDsinst.dstref eq !dstrefEN then
+		--$P Engi
+	elseif !dbDsinst.dstref eq !dstrefFE then
+		--$P Fertiger
+	else
+		--$P Ignore
+		SKIP
+	endif
+	
+	!datasheet = object PMLDatasheet()
+	!datasheet.ExportAsXlsx(!eaDsinst, !dsinstFilename)
+	!datasheet.delete()
+	
+enddo

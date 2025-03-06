@@ -1,0 +1,33 @@
+AIDGRO
+handle any
+	$P Could not find AIDGRO!
+	RETURN
+endhandle
+
+!aidgro = !!CE
+
+!name = !aidgro.name
+!equiName = !name.replace('_Messpunkte','')
+
+var !arc coll all aidarc for $!aidgro
+var !pos eval pos for all from !arc
+var !rad eval rad for all from !arc
+
+/EC/VAE/MESSPUNKTE/EQUI
+$P $!equiName
+$!equiName
+handle any 
+	new EQUI $!equiName
+endhandle
+
+do !nDish index !arc
+	!dia = !rad[!nDish].real() * 2
+	!dishPos = !pos[!nDish]
+	!dishHei = !rad[!nDish]
+	if !nDish.modulo(2) eq 0 then
+		new dish pos $!dishPos dia $!dia hei  $!dishHei
+		ori Y is N and Z is D
+	else
+		new dish pos $!dishPos dia $!dia hei  $!dishHei
+	endif
+enddo

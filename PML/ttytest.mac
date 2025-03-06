@@ -1,0 +1,8 @@
+!command = |"C:\Program Files (x86)\EuC\Launcher 2.0\TTY\LauncherTTY.exe" --origin Local --setup EundC --softwareid E3D_210 --projectcode FUG --user ECADM --password EUNDC4600 --mdb /E_EC_Project_DBs --macropath Desktop\ttytest.mac|
+$P !command
+
+$P Do a banner
+q banner 
+
+$P Do a mem
+q mem

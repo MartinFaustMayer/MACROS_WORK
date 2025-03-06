@@ -1,0 +1,88 @@
+/GRP_PIPE
+
+var !tg coll all :TgPipe for /EC-TAGS-PIPES
+
+var !pipeclass eval :TgPipeclass for all from !tg
+
+!pipeclass.unique()
+
+--!!uniqueval = !pipeclass
+
+!!outputVals = array()
+
+do !eaPC values !pipeclass
+	--if !eaPC ne 'unset' then
+	--endif
+
+	$P $!eaPC
+	
+	var !cClass coll all :TgPipe with :TgPipeclass eq !eaPC for /EC-TAGS-PIPES
+	
+	--:TgPressOpMax
+	--:TgPressOpMin
+	--:TgRKLPress
+	--:TgTempOpMax
+	--:TgTempOpMin
+	--:TgRKLTemp
+	
+	var !presMax eval :TgPressOpMax for all from !cClass
+	var !presMin eval :TgPressOpMin for all from !cClass
+	var !presRkl eval :TgRKLPress   for all from !cClass
+	var !tempMax eval :TgTempOpMax  for all from !cClass
+	var !tempMin eval :TgTempOpMin  for all from !cClass
+	var !tempRkl eval :TgRKLTemp    for all from !cClass
+	
+	!presMax.unique()
+	!presMin.unique()
+	!presRkl.unique()
+	!tempMax.unique()
+	!tempMin.unique()
+    !tempRkl.unique()
+	
+	!!outputVals.append('Rohrklasse: ' + !eaPC)
+	
+	!temp = 'pMax:'
+	--!!outputVals.appendarray(!presMax)
+	do !ea values !presMax
+		!temp = !temp + ' ' + !ea
+	enddo
+	!!outputVals.append(!temp)
+	
+	!temp = 'pMin:'
+	--!!outputVals.appendarray(!presMin)
+	do !ea values !presMin
+		!temp = !temp + ' ' + !ea
+	enddo
+	!!outputVals.append(!temp)
+	
+	!temp = 'pRkl:'
+	--!!outputVals.appendarray(!presRkl)
+	do !ea values !presRkl
+		!temp = !temp + ' ' + !ea
+	enddo
+	!!outputVals.append(!temp)
+	
+	!temp = 'tMax:'
+	--!!outputVals.appendarray(!tempMax)
+	do !ea values !tempMax
+		!temp = !temp + ' ' + !ea
+	enddo
+	!!outputVals.append(!temp)
+	
+	!temp = 'tMin:'
+	--!!outputVals.appendarray(!tempMin)
+	do !ea values !tempMin
+		!temp = !temp + ' ' + !ea
+	enddo
+	!!outputVals.append(!temp)
+	
+	!temp = 'tRkl:'
+	--!!outputVals.appendarray(!tempRkl)
+	do !ea values !tempRkl
+		!temp = !temp + ' ' + !ea
+	enddo
+	!!outputVals.append(!temp)
+	
+enddo
+
+

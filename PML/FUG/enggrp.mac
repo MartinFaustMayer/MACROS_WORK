@@ -1,0 +1,41 @@
+-- !a = !!ce.deslnk[1].ownlst[3].name
+-- !n = '/TAGS' + !a
+-- !!ce.:TgValveRefObPipe = !n.dbref()
+
+!tmpce = !!ce
+
+if !tmpce.type ne 'ENGGRP' then
+	$P not ENGGRP
+	RETURN
+endif
+
+var !tg coll all :TgObValve for $!tmpce
+
+!size = !tg.size()
+$P $!size
+
+!outArr = array()
+
+do !eaTg values !tg
+	!dbTg = !eaTg.dbref()
+	!name = !dbTg.name
+	!pipeName = !dbTg.deslnk[1].ownlst[3].name
+	!tgPipeName = '/TAGS' + !pipeName
+	!dbTgPipe = !tgPipeName.dbref()
+	handle any
+		$P tg $!name has error!
+		SKIP
+	endhandle
+	
+	!string = !name + ' ' + !tgPipeName
+	!outArr.append(!string)
+	
+	!dbTg.:TgValveRefObPipe = !dbTgPipe
+	handle any
+		$P $!string is error
+	endhandle
+	
+enddo
+
+!!retArr = !outArr
+$P q var !!retArr

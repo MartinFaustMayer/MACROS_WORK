@@ -1,0 +1,58 @@
+!tmpCE = !!ce
+
+if !tmpCE.type ne 'DBVW' and !tmpCE.type ne 'ATTCOL' then
+	$P Not DBVW exiting
+	RETURN
+endif
+
+!dbvwName = !tmpCE.name
+
+var !AllAttcol coll all attcol for $!tmpCE
+
+do !eaAttcol values !AllAttcol
+	--!refno = !eaAttcol.dbref().name
+	
+	!dbAttcol = !eaAttcol.dbref()
+	!tAtt = !dbAttcol.dbatt
+	
+	if !tAtt.matchwild(':*') then
+	
+		!tAtt = !tAtt.after(':')
+		!tAttUda = '/' & !tAtt & 'UDA'
+		
+		if !tAtt.matchwild('TgREF*').not() then
+			!newDesc = !tAttUda.dbref().desc
+			handle any
+			
+			elsehandle none
+				!dbAttcol.desc  = !newDesc
+				!dbAttcol.udname  = !newDesc
+			endhandle
+		endif
+		
+	endif
+	
+	
+	!newName = !dbvwName & '/' & !tAtt
+	
+	$!eaAttcol
+	var !ownerType type of owner
+	if !ownerType eq 'SRCELE' then
+		var !ownerExp expression of owner
+		!source = '_of_' & !ownerExp.after('Ob')
+		!newName = !newName & !source
+	endif
+	!newNameSize = !newName.length()
+	if !newNameSize ge 50 then
+		!newName = '/' & !newName.substring(!newNameSize - 48)
+	endif
+	name $!newName
+	handle any
+		!mess = !!error.text
+		$P $!mess
+		$P $!eaAttcol
+		$P ----
+	endhandle
+enddo
+
+$!tmpCE

@@ -1,0 +1,33 @@
+!cata = /----------DIN_EN-CATA-SUPP----------
+
+var !sect coll all sect with purp eq 'PIPE' for $!cata
+
+!x = 0
+!y = 0
+
+do !eaSect values !sect
+	!sectName = !eaSect.dbref().name
+	!pName = !sectName & '-PIPE'
+	new pipe name $!pName
+	
+	var !cate coll all cate for $!eaSect
+	
+	do !eaCate values !cate
+		new branch
+		
+		var !scom coll all scom for $!eaCate
+		--q var !scom.size()
+		
+		do !eaScom values !scom
+			!sname = !eaScom.dbref().name 
+			!spco =  !sname & '-SPCO'
+			!postext = 'E' & !x &' N' & !y &'mm U' & '0mm'
+			new atta spref $!spco pos $!postext
+			!x = !x + 750
+			!aname = '/TEST_' & !sname
+			name $!aname
+		enddo
+		!y = !y + 1500
+		!x = 0
+	enddo
+enddo

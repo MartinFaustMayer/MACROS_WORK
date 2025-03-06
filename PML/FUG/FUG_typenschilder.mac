@@ -1,0 +1,128 @@
+$(
+:EUC-PIPDATA-19 '0408'
+:EUC-PIPDATA-20 'TÜV Austria GmbH'
+
+:sk-titel4 'Name of Pipe'
+:EUC-PIPDATA-15 '2024'
+:EUC-PIPDATA-03 ':TgTemperaturePermittedMaximum of media'
+:EUC-PIPDATA-10 'name of media'
+:EUC-PIPDATA-02 ':TgPressurePermittedMaximum of media'
+:EUC-PIPDATA-17 ':TgDGRLFluidGroup of media'
+:EUC-PIPDATA-04 ':TgPressureTest of media'
+:EUC-PIPDATA-18 'DN'
+$)
+
+!template = /EC/TYPENSCHILD-TYP1/Vorlage
+!regi = /FUG/CE_SCHILDER/ALLE
+handle any
+	$P Registry not fount
+	RETURN
+elsehandle none
+	claim $!regi
+	handle any
+		$P Couldn't claim Registry
+		RETURN
+	endhandle
+endhandle
+
+var !engPipe coll all :TgObPipe for /GRP_PIPE
+
+var !desPipe eval ( deslnk num 1 ) for all from !engPipe
+
+var !datat4 eval ( namn of deslnk num 1 ) for all from !engPipe
+var !data15 eval ( :TgYearOfConstruction ) for all from !engPipe
+
+var !data03 eval ( :TgTemperaturePermittedMaximum of :TgREFObMedium ) for all from !engPipe
+var !data10 eval ( namn of :TgREFObMedium ) for all from !engPipe
+
+var !data02 eval ( :TgPressurePermittedMaximum of :TgREFObMedium ) for all from !engPipe
+var !data17 eval ( :TgDGRLFluidGroup of :TgREFObMedium ) for all from !engPipe
+
+var !data04 eval ( :TgPressureTest of :TgREFObMedium ) for all from !engPipe
+var !data18 eval ( :TgNominalDiameter ) for all from !engPipe
+
+var !dataCat eval ( :TgDGRLCategory ) for all from !engPipe
+
+do !eaPipe index !engPipe
+	
+	!dbEngPipe = !engPipe[!eaPipe].dbref()
+	!dbDesPipe = !desPipe[!eaPipe].dbref()
+	handle any
+		--$P $!dbEngPipe
+		SKIP
+	endhandle
+	
+	!pipeName = !datat4[!eaPipe]
+	if matchwild(!pipename,'*_*') then
+		$P $!pipeName skipped
+		SKIP
+	endif
+	
+	$!regi
+	!drwgName = !template.name.replace('Vorlage', !pipeName)
+	
+	$!drwgName
+	handle any
+		new drwg $!drwgName copy $!template rename /Vorlage /$!pipeName
+	elsehandle none
+		--SKIP
+	endhandle
+	
+	first SHEE
+	
+	!!ce.:sk-titel4 = !datat4[!eaPipe]
+		
+	if ( !data15[!eaPipe] eq 'unset' ) then
+		!!ce.:EUC-PIPDATA-15 = ''
+	else
+		!!ce.:EUC-PIPDATA-15 = !data15[!eaPipe]
+	endif
+	
+	if ( !data03[!eaPipe] eq 'unset' ) then
+		!!ce.:EUC-PIPDATA-03 = ''
+	else
+		!!ce.:EUC-PIPDATA-03 = !data03[!eaPipe]
+	endif
+	
+	if ( !data10[!eaPipe] eq 'unset' ) then
+		!!ce.:EUC-PIPDATA-10 = ''
+	else
+		!!ce.:EUC-PIPDATA-10 = !data10[!eaPipe]
+	endif
+	
+	if ( !data02[!eaPipe] eq 'unset' ) then
+		!!ce.:EUC-PIPDATA-02 = ''
+	else
+		!!ce.:EUC-PIPDATA-02 = !data02[!eaPipe]
+	endif
+	
+	if ( !data17[!eaPipe] eq 'unset' ) then
+		!!ce.:EUC-PIPDATA-17 = ''
+	else
+		!!ce.:EUC-PIPDATA-17 = !data17[!eaPipe]
+	endif
+	
+	if ( !data04[!eaPipe] eq 'unset' ) then
+		!!ce.:EUC-PIPDATA-04 = ''
+	else
+		!!ce.:EUC-PIPDATA-04 = !data04[!eaPipe]
+	endif
+	
+	if ( !data18[!eaPipe] eq 'unset' ) then
+		!!ce.:EUC-PIPDATA-18 = ''
+	else
+		!!ce.:EUC-PIPDATA-18 = !data18[!eaPipe]
+	endif
+	
+	!cat = !dataCat[!eaPipe]
+	
+	if ( !cat eq 'n. Art. 4 Abs. (3) gute Ingenieurpraxis' ) or ( !cat eq 'Kat. I' ) or ( !cat eq 'GIP' ) then
+	
+		!!ce.:EUC-PIPDATA-19 = ''
+		!!ce.:EUC-PIPDATA-20 = ''
+	
+	endif
+
+	--RETURN
+	
+enddo

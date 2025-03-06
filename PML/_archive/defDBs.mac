@@ -1,0 +1,33 @@
+/*
+!m = !!ce.members
+!mName = array()
+!mDesc = array()
+!mType = array()
+!mDBnum = array()
+
+
+do !em values !m
+  if !em.dbwrite then
+    !mName.append(!em.name)
+    !tDesc = !em.desc
+    handle any
+      !mDesc.append('None')
+    elsehandle none
+      if !tDesc.empty() then
+        !mDesc.append('None')
+      else
+        !mDesc.append(!tDesc)
+      endif
+    endhandle
+    !mType.append(!em.type)
+    !mDBnum.append(!em.dbnum)
+  endif
+enddo
+
+do !emn index !mName
+  !N = !mName[!emn].string()
+  !D = !mDesc[!emn].string()
+  !T = !mType[!emn].string()
+  !DB = !mDBnum[!emn].string()
+  $P $!N $!D $!T $!DB
+enddo

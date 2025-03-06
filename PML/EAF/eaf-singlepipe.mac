@@ -1,0 +1,78 @@
+var !pipes coll all pipe with purp of site eq 'PIPE'
+
+!unnamed = 0
+
+!header = 'SITE;ZONE;PIPE;Modified'
+
+!csvArray = array()
+!csvArray.append(!header)
+
+!siteArray = array()
+!zoneArray = array()
+!pipeArray = array()
+!dateArray = array()
+
+!df = object dateformat('D.M.Y')
+!d = object datetime()
+
+!dir = 'D:\Primetals\Export'
+!filePath = !dir + '\Moddates.csv'
+
+do !a to !pipes.size()
+	$!pipes[$!a]
+	
+	var !site namn of site
+	var !zone namn of zone
+	var !pName namn of pipe
+	
+	var !l lastmod
+	!d = !d.datetime(!l)
+	
+	!site = !site.replace('/','_')
+	!zone = !zone.replace('/','_')
+
+	!fulldir = !dir + '\' + !site + '\' + !zone + '\'
+	syscom 'mkdir $!fulldir'
+	
+	if matchw (!!ce.fullname,'PIPE*') then
+
+		--!name = !!ce.fullname.replace('/','_').replace(' ','_')
+		
+		!name = '/' + 'PIPE_' + !unnamed.string('I3')
+		!unnamed = !unnamed + 1
+		!file = !fulldir + !name + '.rvm'
+
+	else
+
+		!name = !!ce.name
+		!file = !fulldir + !name + '.rvm'
+
+	endif
+	
+	!fDate = !df.string(!d)
+	!csvLine = !site + ';' + !zone + ';' + !name.replace('/','') + ';' + !fDate + ';'
+	!csvArray.append(!csvLine)
+	
+	$(
+
+	repre level 6
+	repre insu on update
+	export system /expdri.so
+	export holes on
+	export repr on
+	export autocolour reset
+    export autocolour displayexport on
+	export file /$!file over
+	export ce
+	export finish
+	handle any
+		$P $!file 
+		$P Error: $!pName
+	endhandle
+	
+	$)
+
+enddo
+
+!modFile = object file(!filePath)
+!modFile.writeFile('OVERWRITE',!csvArray)

@@ -1,0 +1,53 @@
+--add pipe
+!file = object file('C:\Users\Public\Documents\AVEVA\USERDATA\PIPESTRUCT.txt')
+
+var !allPipe coll all PIPE with purp of zone eq 'PIPE'
+--var !pipeName eval name for all from !allPipe
+
+!gpset = /EC/EAF/User/PIPE
+--!gpsetNName = '/EC/EAF/PIPE'
+!gpsetNName = '/EC/EAF/User/PIPE'
+!unnamed = 0
+
+!stringArray = array()
+
+-- :EXPORT_FILENAME
+
+do !eaPipe values !allPipe
+	$!gpset
+	!cPipe = !eaPipe.dbref()
+	!cName = !cPipe.name
+	!ownerName = !cPipe.owner.name
+	!fName = ''
+	
+	if !cPipe.isnamed then
+		!fName = !cName
+	else
+		!fName = '/' + 'PIPE_' + !unnamed.string('I3')
+		!unnamed = !unnamed + 1
+	endif
+	
+	!gName = !gpsetNName + !fName
+	!fileName = !fName.replace('/','_').after('_')
+	
+	$!gName
+	handle any
+		$P missing $!gName
+
+		$!gpset
+		new gpset
+		--$P $!gName
+		name $!gName
+		gadd $!eaPipe
+		:EXPORT_FILENAME '$!fileName'
+		:RVM-INSU_EXPORT true
+		:EXPORT_DBLINK $!cPipe
+	elsehandle none
+		--SKIP
+	endhandle
+	
+	!string = !ownerName + '	' + !fileName
+	!stringArray.append(!string)
+enddo
+
+!file.writeFile('OVERWRITE',!stringArray)

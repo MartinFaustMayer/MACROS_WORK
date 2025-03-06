@@ -1,0 +1,52 @@
+!tmpce = !!ce
+
+!maingp = /EC/EAF/User/PIPE
+
+var !gpset coll all gpset with name ne '$!maingp' for $!maingp
+
+!site = array()
+!zone = array()
+
+!mod = array()
+!crea = array()
+
+!file = array()
+
+!fullString = array()
+
+do !eaGPITEM values !gpset
+	
+	$!eaGPITEM
+	
+	var !eaSite namn of site of sitem of first gpitem
+	handle any
+		$P $!eaGPITEM
+		SKIP
+	endhandle
+	
+	var !eaZone namn of zone of sitem of first gpitem
+	
+	var !eaMod lastmod hier of sitem of first gpitem
+	var !eaCrea crdate of sitem of first gpitem
+	
+	var !fileName :EXPORT_FILENAME
+	
+	!string = !eaSite + '; ' + !eaZone + '; ' + !fileName + '; Last modified (' + !eaMod + ')' + '; Created (' + !eaCrea + ')'
+	
+	!site.append(!eaSite)
+	!zone.append(!eaZone)
+	
+	!mod.append(!eaMod)
+	!crea.append(!eaCrea)
+	
+	!file.append(!fileName)
+
+	!fullString.append(!string)
+	
+enddo
+
+!outfile = object file(|C:\Users\Public\Documents\AVEVA\USERDATA\eafpipe-hier.txt|)
+
+!outfile.writefile('OVERWRITE', !fullString)
+
+$!tmpce

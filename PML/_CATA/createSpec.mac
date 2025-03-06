@@ -1,0 +1,31 @@
+!cata = /----------DIN_EN-CATA-SUPP----------
+!sdteCate = '/EuC-CATA-SUPP-/COMMON/'
+
+var !scoms coll all scom for $!cata
+
+--goto spec
+first spec of /supptest
+
+do !eaScom values !scoms
+	!sdte = !sdteCate
+	!dbScom = !eaScom.dbref()
+	
+	!function = !dbScom.owner.name.after('Func-')
+	
+	!type = !dbScom.owner.owner.name.after('SUPP-').before('/CATA')
+	
+	if !type eq 'F&W' then
+		!kind = 'Heavy'
+	elseif !type eq 'V&A' then
+		!kind = 'Light'
+	elseif !type eq 'S&C' then
+		!kind = 'SC'
+	endif
+	
+	!sdte = !sdte & !function & '-' & !kind & '-D'
+	
+    !scomName = !dbScom.name
+	!name = !scomName & '-SPCO'
+	--new spco $!name catref $!eaScom
+	$!name detref $!sdte
+enddo
