@@ -1,10 +1,21 @@
-$inputPath = ".\input\"
-$outputPath = ".\output\"
+$input = "\input\"
+$output = "\output\"
+
+$inputPath = Join-Path $PSScriptRoot $input
+$ifcPath = Join-Path $PSScriptRoot $output
+
+if (-not (test-path $inputPath))
+{
+	"Input Path Missing, Stopping"
+	Return
+}
+
+"Import-Export Started:" 
+get-date -Format "HH:mm:ss"
+
+mkdir $ifcPath -erroraction silentlycontinue
+
 $ifcs = ls $inputPath -Filter "*.ifc"
-
-$source = "\output\"
-
-$ifcPath = Join-Path $PSScriptRoot $source
 
 #echo $PSScriptRoot
 
@@ -18,7 +29,8 @@ new-item -Path .\ -Name "todo.mac" -Force
 
 new-item -Path .\ -Name "importToProj.mac" -Force
 
-rm $outputPath*
+"Empty out Output"
+rm $ifcPath*
 
 foreach($ifc in $ifcs)
 {
@@ -70,7 +82,6 @@ foreach($ifc in $ifcs)
 	echo $peLine >> .\importToProj.mac
 
 }
-
 
 "Import-Export Finished:" 
 get-date -Format "HH:mm:ss"
