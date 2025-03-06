@@ -30,7 +30,7 @@ new-item -Path .\ -Name "todo.mac" -Force
 new-item -Path .\ -Name "importToProj.mac" -Force
 
 "Empty out Output"
-rm $ifcPath*
+rm $ifcPath* -include *.ifc, *.log
 
 foreach($ifc in $ifcs)
 {

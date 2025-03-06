@@ -12,3 +12,5 @@ EAF-IFC-import/todo.mac
 EAF-IFC-import/importToProj.mac
 
 EAF-IFC-import/importStraight.mac
+
+*.bak
