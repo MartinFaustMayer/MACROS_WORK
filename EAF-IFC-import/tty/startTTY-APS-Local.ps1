@@ -1,0 +1,1 @@
+& "C:\Program Files (x86)\EuC\Launcher 2.0\TTY\LauncherTTY.exe" --origin Local --setup PROD_EundC-E3D3.1 --softwareid DESI_310 --projectcode APS --user SYSTEM --password XXXXXX --mdb /ALL --macropath D:\MAC\MACROS_WORK\EAF-IFC-import\tty\nothing.mac

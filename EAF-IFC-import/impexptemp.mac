@@ -1,5 +1,5 @@
 !fileNoExt = 'replaceME'
-!root = 'D:\IFC\EAF-IFC-import\'
+!root = 'D:\MAC\MACROS_WORK\EAF-IFC-import\'
 
 !inputDir = !root & 'input\'
 !outputDir = !root & 'output\'

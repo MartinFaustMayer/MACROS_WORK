@@ -12,6 +12,6 @@ enddo
 
 $!zone
 
-$M "D:\IFC\EAF-IFC-import\todo.mac"
+$M "D:\MAC\MACROS_WORK\EAF-IFC-import\todo.mac"
 
 quit finish
