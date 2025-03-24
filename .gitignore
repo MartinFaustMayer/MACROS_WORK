@@ -1,16 +1,16 @@
 
 *.ifc
 
-EAF-IFC-import/output/
+*/output/
 
-EAF-IFC-import/input/
+*/input/
 
-EAF-IFC-import/old/
+*/old/
 
-EAF-IFC-import/todo.mac
+*todo.mac
 
-EAF-IFC-import/importToProj.mac
+*importToProj.mac
 
-EAF-IFC-import/importStraight.mac
+*importStraight.mac
 
 *.bak
