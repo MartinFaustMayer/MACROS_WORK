@@ -1,0 +1,64 @@
+--Import replaceME here:
+!zone = /HalloWels
+
+!fileNoExt = 'replaceME'
+!root = 'D:\MAC\MACROS_WORK\EAF-IFC-direkt\'
+
+!inputDir = !root & 'input\'
+
+!inputFile = !inputDir & !fileNoExt & '.ifc'
+!inputLog = !inputDir & !fileNoExt & 'new.log'
+
+!dq = '"'
+
+!equiName = '/' & !fileNoExt.replace(' ', '').replace('_2x3','')
+
+--/BXT/MP-KIB
+--/EAF/EC_Reserve_11/IMP
+
+$!zone
+handle any
+	return
+endhandle
+
+new EQUI $!equiName
+handle any
+	!format = object DATEFORMAT('Y_M_D')
+	!time = object datetime()
+	!newEquiname = '/' & !format.string(!time) & !equiname
+	name $!newEquiname
+endhandle
+
+!refEqui = !!ce
+
+$P $!inputFile
+$P $!inputLog
+
+IMP $!dq$!inputFile$!dq AS EQUI LOG FULL $!dq$!inputLog$!dq
+
+!COUNTER = 500
+!GENPRIS = !!CollectAllFor(|GENPRI GENCUR|,||, $!refEqui )
+do !ii index !GENPRIS
+	if !COUNTER eq 500 then
+		new SUBE
+		!COUNTER = 0
+		savework
+	endif
+	
+	include $!GENPRIS[$!ii]
+	!COUNTER = !COUNTER + 1
+enddo
+
+var !d coll all ( genpri gencur ) with matchwild(name, '*$$*') for equi
+
+do !eaD index !d
+
+	$!d[$!eaD]
+	!!ce.name = !!ce.name.replace('$', '_')
+
+enddo
+
+savework
+unclaim all
+
+quit finish
