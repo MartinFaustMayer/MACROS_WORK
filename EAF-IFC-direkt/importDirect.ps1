@@ -32,12 +32,12 @@ foreach($ifc in $ifcs)
 	
 	#write-Host $macFull
 	
-	(Get-Content .\directImpTemp.mac ) -replace 'replaceME', $name | Set-Content $macFile
+	(Get-Content .\directImpTemp.mac ) -replace 'replaceME', $name -replace 'replaceRootPath', $PSScriptRoot | Set-Content $macFile
+	#(Get-Content .\directImpTemp.mac ) -replace 'replaceRootPath', $PSScriptRoot | Set-Content $macFile
 	
 	#$eLine = "`$M `"" + $macFull + "`""
 	#echo $eLine > .\$macName
 	
 	#Start-Process "C:\Program Files (x86)\EuC\Launcher 2.0\TTY\LauncherTTY.exe" -ArgumentList "--origin Server --setup PROD_EundC-E3D3.1 --softwareid DESI_310 --projectcode EAF --user ECADM --password EUNDC4600 --mdb /E_EC_Import_DBs --macropath $macFull"
 	Start-Process "C:\Program Files (x86)\EuC\Launcher 2.0\TTY\LauncherTTY.exe" -ArgumentList "--origin Local --setup PROD_EundC-E3D3.1 --softwareid DESI_310 --projectcode FUG --user ECADM --password EUNDC4600 --mdb /E_EC_Project_DBs --macropath $macFull"
-	
 }

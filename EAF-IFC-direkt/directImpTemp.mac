@@ -2,7 +2,7 @@
 !zone = /HalloWels
 
 !fileNoExt = 'replaceME'
-!root = 'D:\MAC\MACROS_WORK\EAF-IFC-direkt\'
+!root = 'replaceRootPath' & '\'
 
 !inputDir = !root & 'input\'
 
