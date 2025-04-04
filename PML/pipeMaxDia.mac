@@ -1,0 +1,90 @@
+!ce = !!ce
+
+
+!type = !ce.type
+
+if !type eq 'SITE' or !type eq 'ZONE' then 
+
+	$P Evaluate Max Dia for all Pipe of SITE,ZONE
+	
+	var !allPipe coll all pipe for $!ce
+	
+elseif !type eq 'WORL' then
+
+	$P Evaluate Max Dia for all Pipe for Project
+	
+	var !allPipe coll all pipe with purp of site eq 'PIPE' and matchwild(dbname ,'ECTEAM*')
+
+else
+
+	$P CE is not of type SITE/ZONE
+	
+	Return
+	
+endif
+
+--$p $!allPipe
+
+!pipeBore = array()
+
+if !allPipe.size() eq 0 then
+	$P no Pipe in CE
+	Return
+endif
+
+do !eaPipe index !allPipe
+	
+	!eaDbPipe = !allPipe[!eaPipe].dbref()
+	
+	var !allComp coll all bran mem with type ne 'ATTA' for $!eaDbPipe
+	
+	var !abor eval abor for all from !allComp
+	var !lbor eval lbor for all from !allComp
+	
+	!abor.appendarray(!lbor)
+	
+	!abor.unique()
+	
+	!maxAbor = 0
+	
+	do !eaAbor values !abor
+		
+		!eaAborVal = !eaAbor.real().value()
+			
+		if !eaAborVal gt !maxAbor then
+			!maxAbor = !eaAborVal
+		endif
+		
+	enddo
+	
+	--!pipeBore.append(!maxAbor)
+	
+	!name = !eaDbPipe.name
+	
+	--$P $!name max Bore: $!maxAbor
+	
+	!string = |'| & !name & ';' & !maxAbor
+	
+	!pipeBore.append(!string)
+	
+enddo
+
+var !proj proj code
+
+!header = 'Pipe;maxBore'
+
+!file = object file('%pdmsUser%/$!proj' & '_pipeBore.csv')
+
+if not !file.exists() then
+
+	!file.open('WRITE')
+
+	!file.writerecord(!header)
+
+endif
+	
+!file.writefile('APPEND', !pipeBore)
+
+!file.close()
+
+$!ce
