@@ -1,5 +1,5 @@
 --Import replaceME here:
-!zone = /HalloWels
+!zone = /EAF/EC_Reserve_11/IMP/INPUT
 
 !fileNoExt = 'replaceME'
 !root = 'replaceRootPath' & '\'
@@ -22,11 +22,16 @@ handle any
 endhandle
 
 new EQUI $!equiName
-handle any
+handle (41,12)
 	!format = object DATEFORMAT('Y_M_D')
 	!time = object datetime()
 	!newEquiname = '/' & !format.string(!time) & !equiname
 	name $!newEquiname
+elsehandle (2,93)
+	!newEquiname = !newEquiname.substring(0, 45)
+	name $!newEquiname
+elsehandle any
+	--no name
 endhandle
 
 !refEqui = !!ce
@@ -34,7 +39,7 @@ endhandle
 $P $!inputFile
 $P $!inputLog
 
-IMP $!dq$!inputFile$!dq AS EQUI LOG FULL $!dq$!inputLog$!dq
+IMP MULTICAD $!dq$!inputFile$!dq AS EQUI LOG FULL $!dq$!inputLog$!dq
 
 !COUNTER = 500
 !GENPRIS = !!CollectAllFor(|GENPRI GENCUR|,||, $!refEqui )
@@ -45,7 +50,7 @@ do !ii index !GENPRIS
 		savework
 	endif
 	
-	include $!GENPRIS[$!ii]
+	--include $!GENPRIS[$!ii]
 	!COUNTER = !COUNTER + 1
 enddo
 
