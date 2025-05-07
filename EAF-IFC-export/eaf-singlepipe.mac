@@ -1,0 +1,209 @@
+var !rests coll all REST with purp of site eq 'REST'
+
+var !supps coll all STRU with purp of site eq 'SUPP'
+
+var !pipes coll all pipe with purp of site eq 'PIPE'
+
+!items = array()
+
+!items.appendarray(!rests)
+!items.appendarray(!supps)
+!items.appendarray(!pipes)
+
+!header = 'SITE;ZONE;PIPE;Modified'
+
+!csvArray = array()
+!csvArray.append(!header)
+
+!siteArray = array()
+!zoneArray = array()
+!pipeArray = array()
+!dateArray = array()
+
+!df = object dateformat('D.M.Y')
+!d = object datetime()
+
+!dir = 'C:\AVEVA\00-AvevaCloudScripts\EAF\240723\RVM'
+!filePath = 'C:\AVEVA\00-AvevaCloudScripts\EAF\240723\STP\Moddates.csv'
+
+--PART for STP
+
+!unnamed = 0
+!sunnamed = 0
+!runnamed = 0
+
+!dir = 'C:\AVEVA\00-AvevaCloudScripts\EAF\240723\RVM\STP'
+--!dir = 'C:\AVEVA\00-AvevaCloudScripts\EAF\240723\STP\STP'
+
+do !a to !items.size()
+	$!items[$!a]
+	
+	var !site namn of site
+	var !zone namn of zone
+	var !pName namn of ce
+	
+	var !l lastmod hier
+	!d = !d.datetime(!l)
+	
+	!site = !site.replace('/','_')
+	!zone = !zone.replace('/','_')
+
+	!fulldir = !dir + '\' + !site + '\' + !zone + '\'
+	syscom 'mkdir $!fulldir'
+	
+	if matchw (!!ce.fullname,'PIPE*') then
+
+		--!name = !!ce.fullname.replace('/','_').replace(' ','_')
+		
+		!name = '/' + 'PIPE_' + !unnamed.string('I3')
+		!unnamed = !unnamed + 1
+		!file = !fulldir + !name + '.rvm'
+		--!file = !fulldir + !name + '.stp'
+
+	elseif matchw (!!ce.fullname,'STRUCTURE*') then
+		
+		!name = '/' + 'STRU_' + !sunnamed.string('I3')
+		!sunnamed = !sunnamed + 1
+		!file = !fulldir + !name + '.rvm'
+		--!file = !fulldir + !name + '.stp'
+	
+	elseif matchw (!!ce.fullname,'RESTRAINT*') then
+		
+		!name = '/' + 'REST_' + !runnamed.string('I3')
+		!runnamed = !runnamed + 1
+		!file = !fulldir + !name + '.rvm'
+		--!file = !fulldir + !name + '.stp'
+
+	else
+
+		!name = !!ce.namn
+		!file = !fulldir + !name + '.rvm'
+		--!file = !fulldir + !name + '.stp'
+		!file = !file.replace('/','_').replace(' ','_')
+
+	endif
+	
+	!fDate = !df.string(!d)
+	!csvLine = !site + ';' + !zone + ';' + !name.replace('/','') + ';' + !fDate + ';'
+	!csvArray.append(!csvLine)
+	
+	--$(
+
+	repre level 6
+	repre insu on update
+	REPRE INSU ON TRANSLUCENCY 50
+	REPRE OBST ON TRANSLUCENCY 75
+	
+	export system /expdri.so
+	--export system /explantmcad
+	export holes on
+	export repr on
+	export autocolour reset
+    export autocolour displayexport on
+	export implied tube separate
+	export file /$!file over
+	export ce
+	export finish
+	--$(
+	handle any
+		$P $!file 
+		$P Error: $!pName
+	endhandle
+	--$)
+	
+	--$)
+
+enddo
+
+--END PART for STP
+
+!modFile = object file(!filePath)
+!modFile.writeFile('OVERWRITE',!csvArray)
+
+$(
+--PART for IFC
+
+!unnamed = 0
+!sunnamed = 0
+!runnamed = 0
+
+!dir = 'C:\AVEVA\00-AvevaCloudScripts\EAF\240723\STP\IFC'
+
+do !a to !items.size()
+	$!items[$!a]
+	
+	var !site namn of site
+	var !zone namn of zone
+	var !pName namn of ce
+	
+	var !l lastmod hier
+	!d = !d.datetime(!l)
+	
+	!site = !site.replace('/','_')
+	!zone = !zone.replace('/','_')
+
+	!fulldir = !dir + '\' + !site + '\' + !zone + '\'
+	syscom 'mkdir $!fulldir'
+	
+	if matchw (!!ce.fullname,'PIPE*') then
+
+		--!name = !!ce.fullname.replace('/','_').replace(' ','_')
+		
+		!name = '/' + 'PIPE_' + !unnamed.string('I3')
+		!unnamed = !unnamed + 1
+		!file = !fulldir + !name + '.ifc'
+
+	elseif matchw (!!ce.fullname,'STRUCTURE*') then
+		
+		!name = '/' + 'STRU_' + !sunnamed.string('I3')
+		!sunnamed = !sunnamed + 1
+		!file = !fulldir + !name + '.ifc'
+
+	elseif matchw (!!ce.fullname,'RESTRAINT*') then
+		
+		!name = '/' + 'REST_' + !runnamed.string('I3')
+		!runnamed = !runnamed + 1
+		!file = !fulldir + !name + '.ifc'
+
+	else
+
+		!name = !!ce.namn
+		!file = !fulldir + !name + '.ifc'
+		!file = !file.replace('/','_').replace(' ','_')
+
+	endif
+	
+	--!fDate = !df.string(!d)
+	--!csvLine = !site + ';' + !zone + ';' + !name.replace('/','') + ';' + !fDate + ';'
+	--!csvArray.append(!csvLine)
+	
+	--$(
+
+	repre level 6
+	repre insu on update
+	REPRE INSU ON TRANSLUCENCY 50
+	REPRE OBST ON TRANSLUCENCY 75
+	
+	export system /explantmcad
+	EXPORT OPTION 'FORMAT' 'IFC2x3'
+	export holes on
+	export repr on
+	export autocolour reset
+    export autocolour displayexport on
+	export implied tube separate
+	export file /$!file over
+	export ce
+	export finish
+	handle any
+		$P $!file 
+		$P Error: $!pName
+	endhandle
+	
+	--$)
+
+enddo
+
+--END PART for IFC
+$)
+
+quit finish

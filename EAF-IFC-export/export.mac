@@ -1,0 +1,10 @@
+$P Do a mem
+q mem
+
+!!exportPlantFullBatch()
+handle any
+	!mess = !!error.text
+	$P $!mess
+endhandle
+
+quit finish
