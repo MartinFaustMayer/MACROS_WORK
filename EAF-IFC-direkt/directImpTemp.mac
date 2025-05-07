@@ -39,7 +39,7 @@ endhandle
 $P $!inputFile
 $P $!inputLog
 
-IMP MULTICAD $!dq$!inputFile$!dq AS EQUI LOG FULL $!dq$!inputLog$!dq
+IMP MULTICAD $!dq$!inputFile$!dq AS sube bucketsize 503 LOG FULL $!dq$!inputLog$!dq
 
 !COUNTER = 500
 !GENPRIS = !!CollectAllFor(|GENPRI GENCUR|,||, $!refEqui )
