@@ -84,7 +84,7 @@ do !a to !items.size()
 	endif
 	
 	!fDate = !df.string(!d)
-	!csvLine = !site + ';' + !zone + ';' + !name.replace('/','') + ';' + !fDate + ';'
+	!csvLine = !site + ';' + !zone + ';' + !name.replace('/','_') + ';' + !fDate + ';'
 	!csvArray.append(!csvLine)
 	
 	--$(

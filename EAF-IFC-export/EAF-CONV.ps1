@@ -31,10 +31,12 @@ $launch = $true
 
 if ($launch)
 {
-	"delete files from temp"
-	rm $stpPath* -recurse
 	"delete files from RVM Path"
 	rm $rvmPath* -recurse
+
+	"delete files from temp"
+	rm $stpPath* -recurse
+	
 }
 
 $copy_to_L = $false
@@ -120,6 +122,44 @@ $netName = "https://cloud.eundc.at/remote.php/dav/files/5CF3411F-996C-4FB1-90EF-
 net use l: $netName /user:h.zoechling@eundc.at Sommer2025!
 
 # sleep 5
+
+#### START Create Copy for Updates ####
+mkdir '.\STP\STP-Update' -ErrorAction SilentlyContinue
+
+$wDir = $PSScriptRoot 
+
+$lastUpdateString = Get-Content .\lastUpdate.txt -TotalCount 1
+$lUpdate = [DateTime]::ParseExact($lastUpdateString, 'dd.MM.yyyy', $null)
+
+$updated = @()
+
+$mod = Import-Csv -Path .\STP\Moddates.csv -Delimiter ";"
+
+foreach ($line in $mod)
+{
+	$dString = $line.Modified
+	
+	$d = [DateTime]::ParseExact($dString, 'dd.MM.yyyy', $null)
+	
+	if ($d.CompareTo($lUpdate) -ge 0)
+	{
+		$updated += $line
+		$STP = [IO.Path]::Combine($wDir, 'STP\STP', $line.SITE, $line.ZONE, $line.PIPE) + '.stp'
+		#$STP
+		#Test-Path $STP
+		$upDir = [IO.Path]::Combine($wDir, 'STP\STP-Update', $line.SITE, $line.ZONE)
+		mkdir $upDir -ErrorAction SilentlyContinue
+		copy $STP $upDir -ErrorAction Ignore
+	}
+	
+}
+
+$currentDate = Get-Date -Format 'dd.MM.yyyy' 
+Set-Content .\lastUpdate.txt $currentDate
+
+echo 'Export date:' $currentDate 'changes since:' $lastUpdateString 'file Count:' $updated.Count '' >> changes.txt
+
+#### END Create Copy for Updates ####
 
 if($copy_to_L)
 {
