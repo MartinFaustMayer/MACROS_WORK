@@ -1,0 +1,48 @@
+--Import replaceME here:
+--!zone = /EAF/EC_Reserve_11/IMP/INPUT
+!zone = /EAF/EC_Reserve_12/IMP/INPUT
+
+!fileNoExt = 'replaceME'
+!root = 'replaceRootPath' & '\'
+
+!inputDir = !root & 'input\'
+
+!inputFile = !inputDir & !fileNoExt & '.jt'
+!inputLog = !inputDir & !fileNoExt & 'new.log'
+
+!dq = '"'
+
+!equiName = '/' & !fileNoExt.replace(' ', '').replace('_2x3','')
+
+$!zone
+handle any
+	return
+endhandle
+
+new EQUI $!equiName
+handle (41,12)
+	!format = object DATEFORMAT('Y_M_D')
+	!time = object datetime()
+	!newEquiname = '/' & !format.string(!time) & !equiname
+	name $!newEquiname
+elsehandle (2,93)
+	!newEquiname = !equiname.substring(0, 45)
+	name $!newEquiname
+elsehandle any
+	--no name
+endhandle
+
+!refEqui = !!ce
+
+$P $!inputFile
+$P $!inputLog
+
+--Delay 10 sec
+syscom 'PING localhost -n 10'
+
+IMP MULTICAD $!dq$!inputFile$!dq AS sube bucketsize 200 LOG FULL $!dq$!inputLog$!dq
+
+savework
+unclaim all
+
+quit finish
