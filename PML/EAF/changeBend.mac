@@ -1,0 +1,69 @@
+!ce = !!ce
+
+markdb
+
+if !ce.type eq 'WORL' then
+	$P Can't run from World
+	return
+endif
+
+var !elbo5 coll all elbo with pspec of pipe eq /E5P for ce
+var !elbo6 coll all elbo with pspec of pipe eq /E6P for ce
+
+$P ---
+$P Start Change to BEND
+
+!s = !elbo5.size()
+$P E5P number of Elbo: $!s
+
+!s = !elbo6.size()
+$P E6P number of Elbo: $!s
+
+!elbo = !elbo5
+
+!elbo.appendarray(!elbo6)
+
+!s = !elbo.size()
+$P Total size: $!s
+
+!changed = 0
+
+do !eaElbo index !elbo
+
+	!item = !elbo[!eaElbo]
+
+	$!item
+	
+	claim ce
+	handle any
+		!mess = !!error.text
+		$P $!item $!mess
+		SKIP
+	endhandle
+	
+	changetype to bend
+	handle any
+		!mess = !!error.text
+		$P $!item $!mess
+		SKIP
+	endhandle
+	
+	choose with styp 'BEND-BA3'
+	handle any
+		!mess = !!error.text
+		$P $!item $!mess
+		SKIP
+	endhandle
+	
+	!changed = !changed + 1
+
+enddo
+
+$P Changed: $!changed
+$P ---
+
+--!first = !elbo[1]
+--$P $!first
+--choose with styp 'BEND-BA3'
+
+$!ce
