@@ -111,16 +111,6 @@ foreach( $rvm in $inRVM )
 	# cmd.exe /C "$command"
 }
 
-$archName = (Get-Date -Format 'yyyyMMdd') + "_EC_EAF_STP_IFC.ZIP"
-
-# Compress-Archive -Path .\STP\* -DestinationPath .\Zips\$((Get-Date -Format 'yyMMdd') + "_EC_EAF_STP_IFC.ZIP")
-Compress-Archive -Path $stpPath* -DestinationPath .\Zips\$archName -Force
-
-"Mount nextcloud as L:"
-# $netName = "https://cloud.eundc.at/remote.php/dav/files/5CF3411F-996C-4FB1-90EF-A02D3F0F8DD3/2024-017_PRI_EAF Voest Linz/034-Datenaustausch _ step%2Cifc%2C.../01_E%26C - PRI"
-$netName = "https://cloud.eundc.at/remote.php/dav/files/5CF3411F-996C-4FB1-90EF-A02D3F0F8DD3/2024-017_PRI_EAF Voest Linz/034-Datenaustausch _ step%2Cifc%2Cetc/01_E%26C - PRI"
-net use l: $netName /user:h.zoechling@eundc.at Sommer2025!
-
 # sleep 5
 
 #### START Create Copy for Updates ####
@@ -154,8 +144,20 @@ foreach ($line in $mod)
 	
 }
 
+cp .\lastUpdate.txt $stpPath -force
+
 $currentDate = Get-Date -Format 'dd.MM.yyyy' 
 Set-Content .\lastUpdate.txt $currentDate
+
+$archName = (Get-Date -Format 'yyyyMMdd') + "_EC_EAF_STP_UPD.ZIP"
+
+# Compress-Archive -Path .\STP\* -DestinationPath .\Zips\$((Get-Date -Format 'yyMMdd') + "_EC_EAF_STP_IFC.ZIP")
+Compress-Archive -Path $stpPath* -DestinationPath .\Zips\$archName -Force
+
+"Mount nextcloud as L:"
+# $netName = "https://cloud.eundc.at/remote.php/dav/files/5CF3411F-996C-4FB1-90EF-A02D3F0F8DD3/2024-017_PRI_EAF Voest Linz/034-Datenaustausch _ step%2Cifc%2C.../01_E%26C - PRI"
+$netName = "https://cloud.eundc.at/remote.php/dav/files/5CF3411F-996C-4FB1-90EF-A02D3F0F8DD3/2024-017_PRI_EAF Voest Linz/034-Datenaustausch _ step%2Cifc%2Cetc/01_E%26C - PRI"
+net use l: $netName /user:h.zoechling@eundc.at Sommer2025!
 
 echo 'Export date:' $currentDate 'changes since:' $lastUpdateString 'file Count:' $updated.Count '' >> changes.txt
 
