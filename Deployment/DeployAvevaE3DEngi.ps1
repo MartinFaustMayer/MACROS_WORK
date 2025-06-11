@@ -11,8 +11,8 @@ if ($msmq.state -ne "Enabled") {
 
 $deployment = '\\eundc\eundcDATA\Install\02_Deployment'
 
-$pcmPath = '\Aveva_Abhaengigkeiten\20250130_PointCloud\InstallPointCloud.ps1'
-$e3dPath = '\Aveva_Everything3D\20241213_3.1.5.0\InstallE3D.ps1'
+$pcmPath = '\Aveva_Abhaengigkeiten\20250610_PointCloud\InstallPointCloud.ps1'
+$e3dPath = '\Aveva_Everything3D\InstallE3D.ps1'
 $adminPath = '\Aveva_Administration\20241213_Admin2.1\InstallAdmin.ps1'
 $engiPath = '\Aveva_Engineering\20250108_Engi157x64\InstallEngineering.ps1'
 

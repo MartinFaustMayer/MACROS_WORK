@@ -9,6 +9,7 @@ mkdir C:\temp -erroraction silentlycontinue
 
 #Basispfad für E3D 3.1
 $e3d310Inst = join-path $installUNC "02_Deployment\Aveva_Everything3D\20241213_3.1.5.0"
+$e3d310InstFix9 = join-path $installUNC "02_Deployment\Aveva_Everything3D\20250604_Fix_9"
 
 #$ccsPath = join-path $e3d310Inst 'ClientCacheService\ClientCacheService.msi'
 
@@ -31,8 +32,12 @@ $e3dArg = @(
 )
 start-process msiexec.exe -argumentlist $e3dArg -wait
 
-"#Installiere Fix 05"
-$e3dFix = join-path $e3d310Inst '\E3D3.1-FIX\E3D3.1.5.0\E3D3.1.5.0.exe' 
+#"#Installiere Fix 05"
+#$e3dFix = join-path $e3d310Inst '\E3D3.1-FIX\E3D3.1.5.0\E3D3.1.5.0.exe' 
+#start-process $e3dFix -argumentlist "/Q" -wait
+
+"#Installiere Fix 09"
+$e3dFix = join-path $e3d310InstFix9 '\E3D3.1.9.0\E3D3.1.9.exe' 
 start-process $e3dFix -argumentlist "/Q" -wait
 
 "#Kopiere Hoops"
