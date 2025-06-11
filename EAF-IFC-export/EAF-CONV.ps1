@@ -138,12 +138,15 @@ foreach ($line in $mod)
 		#$STP
 		#Test-Path $STP
 		$upDir = [IO.Path]::Combine($wDir, 'STP\STP-Update', $line.SITE, $line.ZONE)
+		
+		###Moving and Copying deactivated until further notice
 		mkdir $upDir -ErrorAction SilentlyContinue
 		copy $STP $upDir -ErrorAction Ignore
 	}
 	
 }
 
+###Moving and Copying deactivated until further notice
 cp .\lastUpdate.txt $stpPath -force
 
 $currentDate = Get-Date -Format 'dd.MM.yyyy' 
