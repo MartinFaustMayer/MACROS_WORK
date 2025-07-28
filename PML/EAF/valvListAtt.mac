@@ -1,0 +1,186 @@
+!tmpce = !!CE
+
+!doDTXS =    true
+!doPipeAtt = true
+!doProps =   true
+!doPN =      true
+!doHCode =   true
+
+!grp = /GRP_VALVE
+
+$!grp
+handle any
+endhandle
+
+!contype = array()
+
+!contype.append('unset')
+!contype.append('BWD')
+!contype.append('FBP')
+!contype.append('FBR')
+!contype.append('FBS')
+!contype.append('FBT')
+!contype.append('FBU')
+!contype.append('SCM')
+!contype.append('SCF')
+!contype.append('WBP')
+!contype.append('WBR')
+!contype.append('WBS')
+
+!conname = array()
+
+!conname.append('')
+!conname.append('geschweisst')
+!conname.append('Flansch')
+!conname.append('Flansch')
+!conname.append('Flansch')
+!conname.append('Flansch')
+!conname.append('Flansch')
+!conname.append('Aussengewinde')
+!conname.append('Innengewinde')
+!conname.append('An- od. Zwischenflansch')
+!conname.append('An- od. Zwischenflansch')
+!conname.append('An- od. Zwischenflansch')
+
+var !tgValve coll all :tgObValve for $!grp
+
+do !eaTgValve value !tgValve
+
+	!dbTgValve = !eaTgValve.dbref()
+	
+	!valv = !dbTgValve.deslnk[1]
+	handle any
+		!mess = !!error.text
+		$P !mess
+	endhandle
+	
+	if !doDTXS then
+		var !stext dtxs of $!valv
+		handle any
+			$P error in $!valv
+		elsehandle none
+		
+			!textpart = !stext.split(';')
+			
+			!text1 = !textPart[1]
+			!text2 = !textPart[2]
+			!text3 = !textPart[3]
+			!text4 = !textPart[4]
+			!text5 = !textPart[5]
+			
+			--!string = !text1 + ', ' + !text2 + ', ' + !text3 + ', ' + !text4 + ', ' + !text5
+			
+			--$P $!string
+			
+			!dbTgValve.:TgValveTypeDesignation = !text1
+			
+			if !text3 eq '- - -' or !text3 eq '---' then
+				!dbTgValve.:TgValveManufacturer = '- - -'
+				-- !dbTgValve.:TgValvePartNumber = !text4 + ' ' + !text5
+				--!dbTgValve.:TgValvePartNumber = !text5
+			else
+				!dbTgValve.:TgValveManufacturer = !text3
+				--!dbTgValve.:TgValveSupplier unset
+				--!dbTgValve.:TgValvePartNumber = !text4
+			endif
+		
+		endhandle		
+
+	endif
+	
+	if !doPipeAtt then
+		!abor = !valv.abor
+		!lbor = !valv.lbor.real().value().string()
+		!acon = !valv.acon
+		!lcon = !valv.lcon
+		
+		!aborString = ''
+		!lborString = ''
+		
+		!aborString = !abor.real().value().string()
+		!lborString = !lbor.real().value().string()
+		
+		!aconString = ''
+		!lconString = ''
+		
+		!aconString = !conname[!contype.find(!acon)[1]]
+		handle any
+		endhandle
+		!lconString = !conname[!contype.find(!lcon)[1]]
+		handle any
+		endhandle
+		
+		!dbTgValve.:TgValveNominalDiameterArrive = !aborString
+		!dbTgValve.:TgValveNominalDiameterLeave = !lborString
+		
+		!dbTgValve.:TgValveConnectionTypeArrive = !aconString
+		!dbTgValve.:TgValveConnectionTypeLeave = !lconString
+
+	endif
+	
+	if !doProps then
+	
+		!fitlen = !valv.fitlen
+		
+		!fitlenString = !fitlen.string('D2')
+		
+		!dbTgValve.:TgValveLengthOfBody = !fitlenString
+		
+		!gwei = !valv.gwei
+		handle any
+		elsehandle none
+		
+			!gweiString = !gwei.value().string('D2')
+			
+			--!dbTgValve.:TgValveWeightValveNoDrive = ''
+			!dbTgValve.:TgValveWeightValveDrive = !gweiString
+		
+		endhandle
+		
+		
+		
+	endif
+	
+	if !doPN then
+		
+		var !stext dtxs of $!valv
+		handle any
+			$P error in $!valv
+		elsehandle none
+			
+			!PNNum = !stext.after('PN').before(';')
+			
+			if !PNNum eq '' then
+				!dbTgValve.:TgValveNominalPressureArrive = ''
+				!dbTgValve.:TgValveNominalPressureLeave = ''
+			else
+				!PN1 = 'PN' + !PNNum.split('/')[1]
+				!dbTgValve.:TgValveNominalPressureArrive = !PN1
+				
+				!PN2 = 'PN' + !PNNum.split('/')[2]
+				handle any
+					!dbTgValve.:TgValveNominalPressureLeave = !PN1
+				elsehandle none
+					!dbTgValve.:TgValveNominalPressureLeave = !PN2
+				endhandle
+			endif
+		endhandle
+		
+		
+	endif
+	
+	if !doHCode then
+	
+		!hcode1 = !dbTgValve.deslnk[1].spref.:hcodeprim01
+		handle any
+			!mess = !!error.text
+			$P $!mess $!eatgValve
+		endhandle
+	
+		!dbTgValve.:TgValvePartNumber = !hcode1
+	
+	endif
+	
+enddo
+
+$!tmpce
