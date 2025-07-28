@@ -1,0 +1,34 @@
+!gpList = 'D:\MAC\MACROS_WORK\EAF-NWD-export\gpsets.txt'
+
+!gpListFile = object file(!gpList)
+
+!gpSets = !gpListFile.readFile()
+handle any
+endhandle
+
+--!gpset = !!ce
+!mode = 'PLANT'
+
+!Exporter  = object eucExporter()
+!Exporter.exportFormat = |RVM|
+!Exporter.exportFolder = 'C:\Users\mayer\Desktop\EAF-AUTO\'
+!Exporter.full = true
+
+do !eaGp values !gpSets
+	
+	!gpString = !eaGp.trim()
+	if !gpString eq '' or !gpString.substring(1,1) ne '/' then
+		$P skipped 1
+		SKIP
+	endif
+	
+	!dbGp = !gpString.dbref()
+	handle any
+		$P skipped 2
+		SKIP
+	endhandle
+	
+	!Exporter.getExportData(!dbGp, !mode)
+	!Exporter.runExport()
+
+enddo
