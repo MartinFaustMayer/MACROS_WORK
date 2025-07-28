@@ -5,11 +5,17 @@
 !tmpce = !!ce
 
 if !tmpce.type ne 'ENGGRP' then
-	$P not ENGGRP
-	RETURN
+	ENGGRP
+	handle any
+		$P not ENGGRP
+		$!tmpce
+		RETURN
+	endhandle
+else
+	!enggrp = !!ce
 endif
 
-var !tg coll all :TgObValve for $!tmpce
+var !tg coll all :TgObValve for $!enggrp
 
 !size = !tg.size()
 $P $!size
@@ -20,6 +26,10 @@ do !eaTg values !tg
 	!dbTg = !eaTg.dbref()
 	!name = !dbTg.name
 	!pipeName = !dbTg.deslnk[1].ownlst[3].name
+	handle any
+		$P error in $!name
+		SKIP
+	endhandle
 	!tgPipeName = '/TAGS' + !pipeName
 	!dbTgPipe = !tgPipeName.dbref()
 	handle any

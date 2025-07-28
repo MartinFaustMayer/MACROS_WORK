@@ -5,10 +5,21 @@ endhandle
 using namespace |AVEVA.Datasheets.Addin|
 
 !dstrefFL = /Flanschenprotokoll
+
 !dstrefEN = /Rohrleitungspruefblatt_Engi
+handle any
+	!dstrefEN = /RPB_Engi
+endhandle
+
 !dstrefFE = /Rohrleitungspruefblatt_Fertiger
+handle any
+	!dstrefFE = /RPB_Fertiger
+endhandle
 
 !dsigro = /ESN/DSIWLD/COVERSHEET/GRP
+handle any
+	!dsigro = /ES_25-0/DSIWLD/COVERSHEET/GRP
+endhandle
 
 $!dsigro
 handle any
@@ -17,6 +28,11 @@ endhandle
 
 var !dsinst coll all dsinst for $!dsigro
 
+!engiArray = array()
+!engiPathArray = array()
+!fertArray = array()
+!fertPathArray = array()
+
 do !eaDsinst values !dsinst
 	
 	!dbDsinst = !eaDsinst.dbref()
@@ -24,20 +40,33 @@ do !eaDsinst values !dsinst
 	!dsinstName = !dbDsinst.name.after('/TAGS/')
 	
 	!dsinstFilename = 'C:\Users\Public\DOCUME~1\AVEVA\USERDATA\Datasheet\' & !dsinstName & '.xlsx'
+	!dsinstPDFname = 'C:\Users\Public\DOCUME~1\AVEVA\USERDATA\Datasheet\' & !dsinstName & '.pdf'
+
+	!datasheet = object PMLDatasheet()
+	!datasheet.ExportAsXlsx(!eaDsinst, !dsinstFilename)
+	!datasheet.ExportAsPdf(!eaDsinst, !dsinstPDFname)
 	
 	if !dbDsinst.dstref eq !dstrefFL then
 		--$P Flan
 	elseif !dbDsinst.dstref eq !dstrefEN then
 		--$P Engi
+		!engiArray.append(!dbDsinst)
+		!engiPathArray.append(!datasheet)
 	elseif !dbDsinst.dstref eq !dstrefFE then
 		--$P Fertiger
+		!fertArray.append(!dbDsinst)
+		!fertPathArray.append(!datasheet)
 	else
 		--$P Ignore
 		SKIP
 	endif
 	
-	!datasheet = object PMLDatasheet()
-	!datasheet.ExportAsXlsx(!eaDsinst, !dsinstFilename)
 	!datasheet.delete()
 	
 enddo
+
+--!datasheet = object PMLDatasheet()
+--!datasheet.ExportAsPdf(!engiArray, !engiPathArray)
+
+--!!e = !engiArray
+--!!eP = !engiPathArray
