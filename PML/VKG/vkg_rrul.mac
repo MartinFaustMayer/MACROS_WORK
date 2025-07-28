@@ -1,0 +1,14 @@
+!rrul = !!ce
+
+if !rrul.type ne 'RRUL' then
+	$P Item is not of type RRUL
+	return
+endif
+
+!rrul.styf = /EC_ISOBOOK/SETTINGS/STYLES/1/Addi/ISOpipe
+
+var !v view
+
+!name = !v & '/Pipe-DOTU'
+
+new rrul $!name copy /ISOS/RTH01-Z01-SPIPES-WG-11-L6-200/COVER/V1/Pipe-DOTU
