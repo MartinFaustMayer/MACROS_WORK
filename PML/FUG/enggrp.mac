@@ -4,7 +4,7 @@
 
 !tmpce = !!ce
 
-if !tmpce.type ne 'ENGGRP' then
+if !tmpce.type ne 'ENGGRP' or !tmpce.type ne 'ENGITE' then
 	ENGGRP
 	handle any
 		$P not ENGGRP
