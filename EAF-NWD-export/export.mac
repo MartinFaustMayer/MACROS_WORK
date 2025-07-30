@@ -1,34 +1,46 @@
-!gpList = 'D:\MAC\MACROS_WORK\EAF-NWD-export\gpsets.txt'
+!nwdType = array()
+!nwdType.append('PIPE')
+!nwdType.append('SUPP')
 
-!gpListFile = object file(!gpList)
+do !eaNwd value !nwdType
 
-!gpSets = !gpListFile.readFile()
-handle any
-endhandle
+	!listName = 'gpsets_' + !eaNwd + '.txt'
+	!gpList = 'C:\AVEVA\00-AvevaCloudScripts\EAF\AutoNavis\' + !listName
 
---!gpset = !!ce
-!mode = 'PLANT'
+	!gpListFile = object file(!gpList)
 
-!Exporter  = object eucExporter()
-!Exporter.exportFormat = |RVM|
-!Exporter.exportFolder = 'C:\Users\mayer\Desktop\EAF-AUTO\'
-!Exporter.full = true
-
-do !eaGp values !gpSets
-	
-	!gpString = !eaGp.trim()
-	if !gpString eq '' or !gpString.substring(1,1) ne '/' then
-		$P skipped 1
-		SKIP
-	endif
-	
-	!dbGp = !gpString.dbref()
+	!gpSets = !gpListFile.readFile()
 	handle any
-		$P skipped 2
-		SKIP
 	endhandle
+
+	!exportFolder = 'C:\AVEVA\00-AvevaCloudScripts\EAF\AutoNavis\RVM\' + !eaNwd + '\'
+	syscom 'mkdir "$!exportFolder"'
 	
-	!Exporter.getExportData(!dbGp, !mode)
-	!Exporter.runExport()
+	!mode = 'PLANT'
+	!Exporter  = object eucExporter()
+	!Exporter.exportFormat = |RVM|
+	!Exporter.exportFolder = !exportFolder
+	!Exporter.full = true
+
+	do !eaGp values !gpSets
+		
+		!gpString = !eaGp.trim()
+		if !gpString eq '' or !gpString.substring(1,1) ne '/' then
+			--$P skipped 1
+			SKIP
+		endif
+		
+		!dbGp = !gpString.dbref()
+		handle any
+			$P skipped 2
+			SKIP
+		endhandle
+		
+		!Exporter.getExportData(!dbGp, !mode)
+		!Exporter.runExport()
+
+	enddo
 
 enddo
+
+quit finish
