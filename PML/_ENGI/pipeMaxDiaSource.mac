@@ -1,0 +1,57 @@
+!ce = !!ce
+
+if not ( !ce.type eq 'ENGGRP' or !ce.type eq 'ENGITE' ) then
+	
+	$P not ENGGRP or ENGITE
+	RETURN
+	
+endif
+
+!bore = array()
+
+!eaDbPipe = !ce.deslnk[1]
+
+var !allComp coll all bran mem with type ne 'ATTA' and not badref(catref) for $!eaDbPipe
+var !allBran coll all bran for $!eaDbPipe
+
+var !hbor eval hbor for all from !allBran
+var !tbor eval tbor for all from !allBran
+
+!bore.appendarray(!hbor)
+!bore.appendarray(!tbor)
+
+var !abor eval abor for all from !allComp
+var !lbor eval lbor for all from !allComp
+
+!bore.appendarray(!lbor)
+!bore.appendarray(!lbor)
+
+!bore.unique()
+
+!!bore = !bore
+
+!maxAbor = 0
+
+do !eaAbor index !bore
+	
+	!eaAborVal = !bore[!eaAbor].real().value()
+	handle any
+		SKIP
+	endhandle
+		
+	if !eaAborVal gt !maxAbor then
+		!maxAbor = !eaAborVal
+		$P !eaAborVal
+	endif
+	
+enddo
+
+!name = !eaDbPipe.name
+
+!oldVal = !ce.:TgNominalDiameter
+
+!string = |'| & !name & ';' & !maxAbor & ';' & !oldVal
+
+$P $!string
+
+$!ce
