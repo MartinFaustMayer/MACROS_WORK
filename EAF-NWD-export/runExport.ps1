@@ -3,6 +3,8 @@ $FTR = Get-item "C:\Program Files\Autodesk\Navisworks Manage 2026\FiletoolsTaskR
 $date = (Get-Date -Format "yyyyMMdd")
 $archName = $date + "_EC_EAF_NWD.ZIP"
 
+& 'C:\Program Files\Autodesk\Navisworks Manage 2026\Roamer.exe' -licensing AdLM
+
 "Mount M: as M"
 net use M: \\eundc.local\eundcDATA\CAD\Avev
 
