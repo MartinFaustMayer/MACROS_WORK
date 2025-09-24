@@ -1,0 +1,9 @@
+import 'MMservices'
+handle any
+endhandle
+
+using namespace 'Aveva.Pdms.MMServices'
+using namespace 'Aveva.Core.MMServices'
+
+!mmTools = object mmTools()
+!mmTools.link(!!ce.name.after('/TAGS').dbref().refno.string(), !!ce.refno.string())
