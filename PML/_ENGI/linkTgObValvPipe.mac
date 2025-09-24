@@ -11,6 +11,7 @@ if !tmpce.type ne 'ENGGRP' or !tmpce.type ne 'ENGITE' then
 		$!tmpce
 		RETURN
 	endhandle
+	!enggrp = !!ce
 else
 	!enggrp = !!ce
 endif
